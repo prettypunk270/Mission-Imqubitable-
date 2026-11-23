@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Mission Imqubitible 3D</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--ag:#C7D1D9;--em:#00C896;--bg:#071B2C;--ink:#F3FAFC;--pri:#168AAD;--ice:#65FBD2;--ok:#00C896;--bad:#ff4d5e;--glass:rgba(7,27,44,.76);box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#071B2C}}
+:root[data-theme="dark"]{--bg:#071B2C}
+html,body{height:100%;margin:0}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+#fl{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .5s}
+#hud{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 8px) 8px calc(env(safe-area-inset-bottom,0px) + 8px)}
+.glass{pointer-events:auto;background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--pri);border-radius:14px;padding:8px 10px;box-shadow:0 0 14px #168AAD44}
+.top{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:13px}
+.bot{font-size:13.5px;max-height:44vh;overflow:auto}.bot p{margin:4px 0}
+button{font:inherit;font-weight:700;color:var(--ink);background:#0d3b57;border:1.5px solid var(--pri);border-radius:10px;padding:9px 12px;cursor:pointer}
+button.sm{padding:6px 8px}button.on{background:var(--pri);color:#071B2C}button:disabled{opacity:.4}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}.acts button{flex:1}
+.slot{display:inline-grid;place-items:center;width:28px;height:28px;margin-right:5px;border-radius:7px;border:1.5px dashed var(--pri);font-weight:800}
+.slot.f{background:var(--ice);color:#071B2C;border:1.5px solid var(--ice);box-shadow:0 0 8px var(--ice)}
+#learn{color:var(--ice);font-size:12.5px}.hide{display:none!important}
+.ov{position:fixed;inset:0;background:rgba(4,15,26,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:10px;z-index:5}
+.ov h1{margin:0;font-size:24px;color:var(--ice)}
+
+.glass{border-color:#168AAD;box-shadow:0 0 14px #168AAD44,inset 0 0 0 1px #C7D1D922}
+button{background:linear-gradient(#0f4560,#0b3249);border-color:#168AAD}
+button.on{background:linear-gradient(#65FBD2,#00C896);color:#071B2C}
+#brief{position:fixed;inset:0;z-index:7;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;background:radial-gradient(ellipse at 50% 0,#0e4a66 0,transparent 55%),#041019;-webkit-overflow-scrolling:touch}
+.bw{max-width:580px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 14px) 14px 0}
+.bh{text-align:center;margin-bottom:10px}.bh small{letter-spacing:.3em;color:var(--ag);font-size:11px}
+.bh h1{margin:2px 0;font-size:clamp(26px,8vw,40px);letter-spacing:.04em;background:linear-gradient(90deg,#F3FAFC,#65FBD2,#168AAD);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cd{background:linear-gradient(160deg,rgba(199,209,217,.12),rgba(22,138,173,.12));border:1px solid #C7D1D955;border-radius:16px;padding:12px 14px;margin:12px 0;font-size:14px;line-height:1.45;box-shadow:0 0 18px #168AAD22}
+.cd p{margin:6px 0}.ct{display:flex;align-items:center;gap:8px}.ct h2{margin:0;font-size:16px;color:var(--ice)}.ic{font-size:24px}
+.an{background:#00c89618;border-left:3px solid var(--em);padding:6px 8px;border-radius:6px}
+.rd{color:#ff6b7a}.chk{margin:6px 0 0;padding-left:18px}
+.tip{border-bottom:1px dotted var(--ice);cursor:help;position:relative;color:var(--ice);outline:none}
+.tip:hover::after,.tip:focus::after{content:attr(data-tip);position:absolute;left:0;bottom:125%;width:min(230px,62vw);background:#041019;color:var(--ink);border:1px solid var(--ag);border-radius:8px;padding:7px 9px;font-size:12px;line-height:1.35;z-index:3;box-shadow:0 4px 14px #000a}
+.chan{position:relative;display:flex;align-items:center;justify-content:space-between;margin:12px 4px 4px;height:54px}
+.nd{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;text-align:center;font-weight:800;line-height:1;background:linear-gradient(#C7D1D9,#8896a2);color:#071B2C;box-shadow:0 0 12px #65FBD255}.nd small{font-size:8px;font-weight:700}
+.ln{flex:1;position:relative;height:3px;margin:0 8px;background:linear-gradient(90deg,#168AAD,#65FBD2);border-radius:3px}
+.ln i{position:absolute;top:-4px;width:10px;height:10px;border-radius:50%;background:#65FBD2;box-shadow:0 0 8px #65FBD2;animation:fw 2.4s linear infinite}
+.ln i:nth-child(2){animation-delay:.6s}.ln i:nth-child(3){animation-delay:1.2s}.ln i:nth-child(4){animation-delay:1.8s}
+@keyframes fw{from{left:0;opacity:0}15%{opacity:1}85%{opacity:1}to{left:calc(100% - 10px);opacity:0}}
+.eye{position:absolute;left:50%;top:-14px;font-size:22px;transform:translateX(-50%);animation:ey 2s ease-in-out infinite}@keyframes ey{50%{transform:translateX(-50%) scale(1.25);filter:drop-shadow(0 0 6px #ff4d5e)}}
+.demo{position:relative;height:96px;margin:8px 0;border-radius:12px;background:linear-gradient(#0a2e46,#071B2C);border:1px solid #168AAD66;overflow:hidden;display:flex;justify-content:space-around;padding-top:8px}
+.dr{width:38%;height:50px;border-radius:8px 8px 2px 2px;background:linear-gradient(#F3FAFC,#8896a2);color:#071B2C;font-size:11px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 10px #168AAD66;position:relative}
+.dr::after{position:absolute;bottom:-18px;font-size:14px}.dr:nth-child(1)::after{content:'✅';animation:pl 4s infinite}.dr:nth-child(2)::after{content:'❌';animation:pl 4s 2s infinite}
+@keyframes pl{0%,45%{opacity:.15}10%,30%{opacity:1}}
+.cr{position:absolute;left:50%;bottom:4px;font-size:22px;transform:translateX(-50%);animation:cr 4s infinite}
+@keyframes cr{0%{left:50%;bottom:4px;opacity:1}22%{left:26%;bottom:40px;opacity:1}30%{left:26%;bottom:56px;opacity:0}48%{left:50%;bottom:4px;opacity:0}52%{left:50%;bottom:4px;opacity:1}72%{left:74%;bottom:40px;opacity:1;filter:none}80%{left:74%;bottom:40px;filter:drop-shadow(0 0 6px #ff4d5e) hue-rotate(120deg)}100%{left:74%;bottom:6px;opacity:0}}
+.d2{align-items:center;padding:0;gap:8px;padding:0 8px}.tl{flex:1;height:60px;border-radius:8px;background:#06121a;border:2px solid #65FBD2;display:grid;place-items:center;font:700 13px monospace;color:#65FBD2;text-align:center}
+.tl.x{border-color:#ff4d5e;color:#ff4d5e;animation:bl 1.4s infinite}@keyframes bl{50%{background:#3a0d14}}
+.ex{background:#04101966;border:1px dashed #65FBD288;border-radius:12px;padding:8px 10px;margin:8px 0}.row{display:flex;gap:8px;margin:6px 0}.row button{flex:1}
+.res{min-height:20px;color:var(--ice);font-weight:700}
+button.ok{border-color:#00C896;background:#00C89644}button.no{border-color:#ff4d5e;background:#ff4d5e33}
+.gh{background:none;padding:5px 10px;font-size:12px}.lm{background:none;border:none;color:var(--ice);padding:4px 0;text-decoration:underline}
+.more{font-size:13px;color:var(--ag);border-top:1px solid #C7D1D933;padding-top:6px;margin-top:4px}
+.mt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}.mt button{padding:8px 2px;font:700 13px monospace}
+.hw ol{margin:4px 0 8px;padding-left:20px}.hw h3{margin:8px 0 0;font-size:14px;color:var(--ag)}
+.stick{position:sticky;bottom:0;margin:0 -14px;padding:22px 14px calc(env(safe-area-inset-bottom,0px) + 12px);background:linear-gradient(transparent,#041019 45%)}
+#bgo{width:100%;padding:14px;font-size:17px;letter-spacing:.12em;background:linear-gradient(#65FBD2,#00C896);color:#071B2C;border:none;box-shadow:0 0 22px #00C89688;animation:bp 2s ease-in-out infinite}@keyframes bp{50%{box-shadow:0 0 34px #65FBD2cc}}
+#win{position:fixed;inset:0;z-index:8;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;background:radial-gradient(ellipse at 50% 25%,rgba(0,200,150,.4),transparent 60%),radial-gradient(ellipse at 50% 100%,rgba(22,138,173,.55),transparent 65%),rgba(4,16,28,.9)}
+#win::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 15% 20%,#00c8964d,transparent 40%),radial-gradient(circle at 85% 70%,#168AAD66,transparent 45%);animation:bgp 3s ease-in-out infinite alternate}@keyframes bgp{from{opacity:.4}to{opacity:1}}
+#cf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.wp{position:fixed;bottom:2px;z-index:1;pointer-events:none;font-size:clamp(56px,15vw,120px);transform-origin:bottom center;animation:pp 1.7s ease-in-out infinite}.wp.l{left:0}.wp.r{right:0;--f:-1}.wp.l{--f:1}
+@keyframes pp{0%,60%,100%{transform:scale(var(--f),1)}70%{transform:scale(calc(var(--f)*1.35),1.35) rotate(calc(var(--f)*-8deg))}}
+.wc{position:relative;z-index:2;max-width:760px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:calc(env(safe-area-inset-top,0px) + 14px) 12px calc(env(safe-area-inset-bottom,0px) + 90px);gap:8px;box-sizing:border-box}
+.bdg{padding:6px 16px;border:2px solid #C7D1D9;border-radius:99px;font-weight:800;letter-spacing:.25em;font-size:clamp(11px,3.2vw,16px);color:#F3FAFC;background:linear-gradient(90deg,#168AAD88,#00C89688);box-shadow:0 0 18px #65FBD2aa;animation:bp 2s infinite}
+.tr{width:clamp(84px,24vw,150px);filter:drop-shadow(0 0 16px #65FBD2);animation:fl2 3s ease-in-out infinite}@keyframes fl2{50%{transform:translateY(-8px) rotate(2deg)}}
+.tr .orb{transform-box:fill-box;transform-origin:center;animation:sp 5s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+#wh{margin:0;font:900 clamp(30px,8.2vw,132px)/1 "Arial Black",Impact,system-ui,sans-serif;letter-spacing:-.02em;white-space:nowrap;background:linear-gradient(90deg,#F3FAFC,#65FBD2,#168AAD,#C7D1D9,#65FBD2);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px #00C896);animation:sh 4s linear infinite,pop 1.2s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes sh{to{background-position:300% 0}}@keyframes pop{from{transform:scale(.2);opacity:0}}
+.wem{font-size:clamp(34px,10vw,84px);line-height:1;animation:pop 1s .2s both}
+#ws{margin:0;font-weight:800;font-size:clamp(18px,4.8vw,44px);color:#F3FAFC;text-shadow:0 0 14px #168AAD;animation:pop 1s .5s both}
+#wt{margin:0;color:var(--ag);font-size:clamp(13px,3.2vw,18px);max-width:560px;font-style:italic}
+.ach{width:min(100%,460px);border:1px solid #C7D1D9aa;border-radius:14px;background:rgba(7,27,44,.72);backdrop-filter:blur(6px);padding:8px 12px;text-align:left;font-size:clamp(12px,3.3vw,15px)}
+.ach div{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid #C7D1D922}.ach div:last-child{border:none;font-weight:800;color:#65FBD2;padding-top:7px}.ach b{color:#00C896;white-space:nowrap}
+.wb{display:flex;gap:10px;width:min(100%,460px);margin-top:4px;position:relative;z-index:3}.wb button{flex:1;padding:13px 6px;font-size:14px}.wb #pa{background:linear-gradient(#65FBD2,#00C896);color:#071B2C;border:none}
+</style></head><body>
+<canvas id="c"></canvas><div id="fl"></div>
+<div id="hud">
+ <div class="glass top"><div><b>MISSION IMQUBITIBLE</b><br><span id="rn" style="color:var(--ice)"></span></div>
+ <div><button class="sm on" id="b1">R1</button> <button class="sm" id="b2" disabled>🔒 R2</button> <button class="sm" id="hp" title="Help">❓</button> <button class="sm" id="snd">🔊</button> <button class="sm" id="pz">⏸</button> <button class="sm" id="rs">↻</button></div></div>
+ <div class="glass bot">
+  <p id="obj" style="color:var(--ice);font-weight:700"></p>
+  <div id="k"><span id="kc"></span> <b id="tm"></b></div>
+  <div id="s2" class="hide"><b id="st">Streak 0/3</b> · <b id="tp">Taps 5</b></div>
+  <p id="msg"></p>
+  <div class="acts" id="a1"><button id="go">Start round</button></div>
+  <div class="acts hide" id="a2"><button id="spy" style="border-color:var(--bad)">🚨 SPY DETECTED</button><button id="safe" style="border-color:var(--ok)">✅ SYSTEM SAFE</button></div>
+  <p id="learn"></p>
+ </div>
+</div>
+<div id="load" class="ov"><h1>MISSION IMQUBITIBLE</h1><p id="lt">Booting quantum facility…</p><button id="enter" class="hide">Enter facility</button></div>
+<div id="end" class="ov hide"><h1 id="eh"></h1><p id="et"></p><button id="eb"></button></div>
+
+<div id="brief" class="hide"><div class="bw">
+<div class="bh"><small>CLASSIFIED · QUANTUM LAB</small><h1>MISSION BRIEFING</h1></div>
+<section class="cd"><div class="ct"><span class="ic">🛰️</span><h2>The Mission</h2></div>
+<p>Deep in a quantum laboratory, <b>Alice</b> must send a secret key to <b>Bob</b>. A mysterious <b class="rd">spy</b> may be tapping the line.</p>
+<div class="chan"><span class="nd">A<small>ALICE</small></span><span class="ln"><i></i><i></i><i></i><i></i></span><span class="nd">B<small>BOB</small></span><span class="eye">🕵️</span></div>
+<ul class="chk"><li>Send a secret <span class="tip" tabindex="0" data-tip="A short string of 0s and 1s only Alice and Bob share. It locks and unlocks their messages.">key</span> safely</li><li>Catch any unwanted interception</li></ul></section>
+<section class="cd"><div class="ct"><span class="ic">🚪</span><h2>Room 1 · Quantum Key Exchange</h2></div>
+<p class="an">🧳 <b>Analogy:</b> a courier carries secret information through <b>two possible doors</b>. Only the correct route gets it there safely.</p>
+<div class="demo"><div class="dr">UPPER</div><div class="dr">LOWER</div><div class="cr">🧳</div></div>
+<p>Right door: the bit joins your key. Wrong door: the bit is <b>discarded</b>.</p>
+<div class="ex"><b>Try an example</b><div class="row"><button id="x1u">UPPER</button><button id="x1l">LOWER</button></div><p class="res" id="x1r">Which door is the real exit?</p><button class="gh" id="x1n">New example</button></div>
+<button class="lm" data-t="m1">Learn more ▾</button>
+<div id="m1" class="more hide">This mirrors <span class="tip" tabindex="0" data-tip="BB84 (1984) was the first quantum key exchange protocol. Alice and Bob keep only the bits where their setups matched.">BB84</span>-style exchange. Alice sends each <span class="tip" tabindex="0" data-tip="A qubit is a quantum bit. Unlike a normal 0/1 bit, it can be measured in different ways, and the way you measure matters.">qubit</span> prepared in a random setup, and Bob guesses a setup. Matching setups keep the bit; mismatches are thrown away. The two doors stand for the two possible setups.</div></section>
+<section class="cd"><div class="ct"><span class="ic">📹</span><h2>Room 2 · Catch the Spy</h2></div>
+<p class="an">🎥 <b>Analogy:</b> security cameras watch a confidential conversation. If someone secretly interferes, <b>inconsistencies appear</b>.</p>
+<div class="demo d2"><div class="tl">A:1<br>B:1<br>CLEAR</div><div class="tl x">A:0<br>B:1<br>INTRUDER!</div><div class="tl">A:1<br>B:1<br>CLEAR</div></div>
+<p>Matching bits = clear line. Mismatches = possible interference.</p>
+<div class="ex"><b>Try an example</b><div class="mt" id="x2g"></div><p class="res" id="x2r">Tap a camera to compare Alice and Bob.</p><button class="gh" id="x2n">New example</button></div>
+<button class="lm" data-t="m2">Learn more ▾</button>
+<div id="m2" class="more hide">Measuring a qubit <span class="tip" tabindex="0" data-tip="Quantum measurement disturbance: observing a quantum state can change it, so a snooper leaves errors behind.">disturbs it</span>. A spy who peeks at the key unavoidably causes some bits to flip, and those flips show up as mismatches between Alice and Bob. (This game simplifies the real physics.)</div></section>
+<section class="cd hw"><div class="ct"><span class="ic">🎮</span><h2>How to Play</h2></div>
+<h3>ROOM 1</h3><ol><li>Press <b>Start round</b>.</li><li>Tap the correct door before time runs out.</li><li>Collect <b>6 successful bits</b>.</li></ol>
+<h3>ROOM 2</h3><ol><li>Inspect up to <b>5 cameras</b>.</li><li>Compare Alice’s and Bob’s bits.</li><li>Choose <b>SPY DETECTED</b> or <b>SYSTEM SAFE</b>.</li><li>Get <b>3 correct calls in a row</b> to clear the room.</li></ol>
+<p>Stuck later? Tap ❓ in the top bar to reopen this briefing.</p></section>
+<div class="stick"><button id="bgo">ENTER THE MISSION</button></div>
+</div></div>
+<div id="win" class="hide"><canvas id="cf"></canvas><div class="wp l">🎉</div><div class="wp r">🎉</div>
+<div class="wc"><div class="bdg">MISSION COMPLETED</div>
+<svg class="tr" viewBox="0 0 120 130" aria-hidden="true"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3FAFC"/><stop offset=".5" stop-color="#C7D1D9"/><stop offset="1" stop-color="#65FBD2"/></linearGradient><linearGradient id="sg2" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#168AAD"/><stop offset="1" stop-color="#65FBD2"/></linearGradient></defs><ellipse class="orb" cx="60" cy="62" rx="54" ry="14" fill="none" stroke="#65FBD2" stroke-width="2" opacity=".85"/><polygon points="60,6 92,40 60,104 28,40" fill="url(#sg)"/><polygon points="60,6 92,40 60,48 28,40" fill="#F3FAFC" opacity=".6"/><polygon points="60,48 92,40 60,104" fill="url(#sg2)" opacity=".8"/><polygon points="28,40 60,48 60,104" fill="#168AAD" opacity=".6"/><rect x="38" y="108" width="44" height="8" rx="3" fill="#C7D1D9"/><rect x="30" y="116" width="60" height="8" rx="3" fill="#8896a2"/></svg>
+<div class="wem">🎉🎊🎉</div><h1 id="wh">CONGRATULATIONS!</h1><p id="ws">YOU CRACKED THE QUANTUM MISSION!</p>
+<p id="wt">From exchanging secret quantum keys to catching an invisible spy, you’ve successfully secured the communication channel.</p>
+<div class="ach"><div><span>Room 1: Quantum Key Exchange</span><b>COMPLETED ✔</b></div><div><span>Room 2: Spy Detection</span><b>COMPLETED ✔</b></div><div><span>Final Status</span><span>QUANTUM SECURITY RESTORED</span></div></div>
+<div class="wb"><button id="pa">PLAY AGAIN</button><button id="mm">RETURN TO MAIN MENU</button></div></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),cl=(a,b,t)=>a+(b-a)*t;
+if(!window.THREE){$('lt').textContent='The 3D engine failed to load. Check your connection and reload.'}
+else try{init()}catch(e){$('lt').textContent='Something went wrong starting the game.';console.error(e)}
+function init(){
+const cv=$('c'),R=new THREE.WebGLRenderer({canvas:cv,antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));
+const S=new THREE.Scene();S.background=new THREE.Color(0x071B2C);S.fog=new THREE.Fog(0x071B2C,14,48);
+const C=new THREE.PerspectiveCamera(60,1,.1,100);
+const g1=new THREE.Group(),g2=new THREE.Group();S.add(g1,g2);
+const M=(c,e,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,emissive:e||0,metalness:.5,roughness:.35},o||{}));
+const add=(g,geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);g.add(m);return m};
+const B_=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+function tex(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');fn(x);const t=new THREE.CanvasTexture(c);return{c,x,t}}
+function label(txt,w,h,col){const T_=tex(256,64,x=>{x.fillStyle=col;x.font='bold 34px monospace';x.textAlign='center';x.fillText(txt,128,44)});return new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:T_.t,transparent:true}))}
+let r1done=false,room=1,started=false,paused=false,muted=false,T=0,AC,amb;
+/* sound */
+function snd(f,d,t,v,f2){if(muted||!AC)return;d=d||.12;const o=AC.createOscillator(),g=AC.createGain(),n=AC.currentTime;o.type=t||'sine';o.frequency.setValueAtTime(f,n);if(f2)o.frequency.exponentialRampToValueAtTime(f2,n+d);g.gain.setValueAtTime(v||.08,n);g.gain.exponentialRampToValueAtTime(.0001,n+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(n+d)}
+/* shared lights, dust */
+const dg=new THREE.BufferGeometry(),dp=new Float32Array(360);for(let i=0;i<360;i+=3){dp[i]=(Math.random()-.5)*24;dp[i+1]=Math.random()*7;dp[i+2]=(Math.random()-.5)*34}
+dg.setAttribute('position',new THREE.BufferAttribute(dp,3));const dust=new THREE.Points(dg,new THREE.PointsMaterial({color:0xC7D1D9,size:.07,transparent:true,opacity:.7}));S.add(dust);
+/* ROOM 1 */
+g1.add(new THREE.AmbientLight(0x7fb8cc,.7));
+const l1=new THREE.PointLight(0x168AAD,1.3,45);l1.position.set(0,5,5);g1.add(l1);
+const l1b=new THREE.PointLight(0x65FBD2,1.2,30);l1b.position.set(0,3,-9);g1.add(l1b);
+add(g1,B_(12,.2,40),M(0x0b2b42),0,-.1,-4);
+add(g1,B_(.3,7,40),M(0x123a55),-6,3.4,-4);add(g1,B_(.3,7,40),M(0x123a55),6,3.4,-4);add(g1,B_(12,.3,40),M(0x0a2438),0,7,-4);
+add(g1,B_(12,7,.3),M(0x103654),0,3.4,-14);
+const strips=[];[-3,0,3].forEach(x=>{for(let i=0;i<10;i++)strips.push(add(g1,B_(.22,.03,1.2),M(0,0x2fb4e0),x,.03,14-i*3))});
+const ring=add(g1,new THREE.TorusGeometry(2.2,.12,12,48),M(0,0x65FBD2),0,2.6,-12.8);
+const al=label('ALICE ▸ SENDING',5,1.2,'#65FBD2');al.position.set(-5.7,3,8);al.rotation.y=.9;g1.add(al);
+const doors={},doorMeshes=[];
+[['u','UPPER',-3,1.2],['l','LOWER',3,0]].forEach(([k,nm,x,y])=>{
+ const g=new THREE.Group();g.position.set(x,y,-8.5);g1.add(g);
+ const pm=M(0xC7D1D9,0x0b3a52),panel=add(g,B_(2.4,3.2,.25),pm,0,1.6,0);
+ const fm=M(0x9aa7b2,0x168AAD);[-1.4,1.4].forEach(px=>add(g,B_(.3,3.5,.4),fm,px,1.75,0));add(g,B_(3.1,.3,.4),fm,0,3.4,0);
+ [panel,...g.children.filter(c=>c!==panel&&c.geometry.type=='BoxGeometry')].forEach(m=>{m.userData.lane=k;doorMeshes.push(m)});
+ const lb=label(nm,2.4,.6,'#ffffff');lb.position.set(0,4,0);g.add(lb);
+ if(y>0)add(g1,B_(3.4,y,3.2),M(0x123a55,0x0a3552),x,y/2,-8.5);
+ doors[k]={g,panel,pm,x,y,open:false}});
+function mkRunner(){const r=new THREE.Group(),m=M(0xC7D1D9,0x223,{metalness:.2});
+ add(r,new THREE.CylinderGeometry(.33,.33,.9,12),m,0,.95,0);add(r,new THREE.SphereGeometry(.3,14,14),m,0,1.7,0);
+ const cap=add(r,B_(.4,.4,.4),M(0xffd43b,0xffb300),0,1.05,-.42);r.userData.cap=cap;
+ r.userData.legs=[-.15,.15].map(x=>{const p=new THREE.Group();p.position.set(x,.5,0);r.add(p);add(p,B_(.16,.5,.18),m,0,-.25,0);return p});return r}
+const run=mkRunner();run.visible=false;g1.add(run);
+/* particles */
+const bursts=[];function burst(p,col){const n=50,g=new THREE.BufferGeometry(),pos=new Float32Array(n*3),vel=[];for(let i=0;i<n;i++){pos.set([p.x,p.y,p.z],i*3);vel.push(new THREE.Vector3((Math.random()-.5)*6,Math.random()*5,(Math.random()-.5)*6))}
+ g.setAttribute('position',new THREE.BufferAttribute(pos,3));const pts=new THREE.Points(g,new THREE.PointsMaterial({color:col,size:.2,transparent:true}));S.add(pts);bursts.push({pts,vel,t:0})}
+/* HUD helpers */
+const msg=t=>$('msg').textContent=t,learn=t=>$('learn').textContent=t;
+function flash(c){const f=$('fl');f.style.background=c=='bad'?'rgba(255,77,94,.4)':'rgba(0,200,150,.35)';f.style.opacity=1;setTimeout(()=>f.style.opacity=0,350)}
+let key=[],ph='idle',pick=null,real,aBit,t0=0,tx=0,ty=0,ct=0,lastStep=0;const DUR=2.8;
+function hudKey(){let h='Key ';for(let i=0;i<6;i++)h+='<span class="slot'+(i<key.length?' f':'')+'">'+(i<key.length?key[i]:'')+'</span>';$('kc').innerHTML=h}
+function resetDoors(){for(const k in doors){const d=doors[k];d.open=false;d.panel.position.y=1.6;d.pm.emissive.set(0x0b3a52)}}
+function reset1(){ph='idle';key=[];run.visible=false;resetDoors();$('go').disabled=false;$('go').textContent='Start round';$('tm').textContent='';hudKey();msg('Press Start. A runner carries a secret bit down the corridor.');learn('Real life: a letter slot that only fits one kind of card.')}
+function start1(){if(ph=='run'||ph=='esc'||ph=='crash'||key.length>=6||paused)return;ph='run';t0=T;pick=null;tx=0;ty=0;real=Math.random()<.5?'u':'l';aBit=Math.random()<.5?0:1;
+ run.visible=true;run.position.set(0,0,12);run.rotation.set(0,0,0);resetDoors();$('go').disabled=true;msg('Tap the door you think is the real exit!');snd(500,.15,'triangle')}
+function pickDoor(k){if(ph!='run')return;pick=k;tx=doors[k].x;ty=doors[k].y;for(const j in doors)doors[j].pm.emissive.set(j==k?0x00A87F:0x0b3a52);snd(700,.08)}
+function resolve(){const d=doors[real],nm=real=='u'?'upper':'lower';d.open=true;snd(200,.4,'sawtooth',.05,600);
+ if(pick==real){ph='esc';burst(new THREE.Vector3(d.x,d.y+1.6,-8),0x65FBD2);key.push(aBit);hudKey();snd(880,.2,'sine',.1,1320);msg('✅ Right door! Bit '+aBit+' joins your key.');learn('Right door = the message arrives safely, so the bit is kept.')}
+ else{ph='crash';ct=T;flash('bad');snd(150,.4,'sawtooth',.1,50);msg(pick?'❌ Crash! The real door was the '+nm+' one. Bit discarded.':'⏱ Too slow! The real door was the '+nm+' one.');learn('Wrong door scrambles the message, so Alice and Bob throw that bit away.')}}
+function after1(){run.visible=false;if(key.length>=6){ph='done';r1done=true;end('KEY COMPLETE','Your key '+key.join('')+' unlocks the next security chamber.','Enter Room 2',()=>{$('b2').disabled=false;$('b2').textContent='R2';setRoom(2)});snd(660,.15);setTimeout(()=>snd(880,.15),150);setTimeout(()=>snd(1320,.3),300)}else{ph='idle';$('go').disabled=false;$('go').textContent='Next round'}}
+/* ROOM 2 */
+g2.add(new THREE.AmbientLight(0x4d93ad,.6));
+const l2=new THREE.PointLight(0x168AAD,1.2,40);l2.position.set(0,6,0);g2.add(l2);
+const alarm=new THREE.PointLight(0xff2a40,0,30);alarm.position.set(0,4,-4);g2.add(alarm);
+add(g2,new THREE.CylinderGeometry(14,14,.2,48),M(0x081f33),0,-.1,-2);
+const ahol=add(g2,new THREE.TorusGeometry(.9,.08,10,40),new THREE.MeshBasicMaterial({color:0xff2a40,transparent:true,opacity:.2}),0,5.9,-7);
+[[-6.5,'ALICE'],[6.5,'BOB']].forEach(([x,n])=>{add(g2,B_(1.4,1.6,1.2),M(0x9aa7b2,0x0b3a52),x,.8,-3);const l=label(n,1.6,.4,'#65FBD2');l.position.set(x,1.9,-3);g2.add(l)});
+const dots=[];for(let i=0;i<8;i++)dots.push(add(g2,new THREE.SphereGeometry(.09,8,8),new THREE.MeshBasicMaterial({color:0x65FBD2}),-5+i*1.4,.5,-3));
+const spy=new THREE.Group();spy.position.set(0,0,-7);spy.scale.setScalar(1.5);g2.add(spy);const sm=new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0});
+add(spy,new THREE.CylinderGeometry(.35,.5,1.3,12),sm,0,.65,0);add(spy,new THREE.SphereGeometry(.3,12,12),sm,0,1.55,0);add(spy,new THREE.ConeGeometry(.5,.3,14),sm,0,1.9,0);
+const cams=[],screens=[];
+for(let r=0;r<3;r++)for(let j=0;j<4;j++){const i=r*4+j,a=(j-1.5)*.45,g=new THREE.Group();g.position.set(Math.sin(a)*8,1.3+r*1.5,-Math.cos(a)*8);g.rotation.y=-a;g2.add(g);
+ const t=tex(256,192,()=>{}),sc=add(g,new THREE.PlaneGeometry(2.1,1.575),new THREE.MeshBasicMaterial({map:t.t}),0,0,.05);sc.userData.i=i;screens.push(sc);add(g,B_(2.3,1.75,.1),M(0x0b2b42,0x0a3552),0,0,0);
+ cams.push({g,t,base:g.position.clone(),seen:0})}
+let A=[],B=[],spyOn,taps=5,streak=0,done2=false,alertV=0,focus=-1,seen=0,pend;
+function drawCam(i,mode){const c=cams[i].t,x=c.x,col=mode=='bad'?'#ff4d5e':mode=='ok'?'#00C896':'#65FBD2';x.fillStyle=mode=='bad'?'#3a0d14':'#07121a';x.fillRect(0,0,256,192);x.strokeStyle=col;x.lineWidth=8;x.strokeRect(0,0,256,192);x.fillStyle=col;x.textAlign='left';
+ x.font='bold 22px monospace';x.fillText('CAM '+String(i+1).padStart(2,'0'),14,36);
+ if(mode=='idle'){x.fillText('● REC',14,176);x.font='bold 70px monospace';x.fillText('?',108,125)}
+ else{x.font='bold 40px monospace';x.fillText('A:'+A[i]+'  B:'+B[i],34,100);x.font='bold 28px monospace';x.fillText(mode=='bad'?'INTRUDER!':'CLEAR',50,152)}c.t.needsUpdate=true}
+function hud2(){$('st').textContent='Streak '+streak+'/3';$('tp').textContent='Taps '+taps}
+function new2(){clearTimeout(pend);done2=false;taps=5;focus=-1;seen=0;spyOn=Math.random()<.5;A=Array.from({length:12},()=>Math.random()<.5?1:0);B=A.slice();
+ if(spyOn){let n=0;while(n<3){n=0;B=A.map(v=>Math.random()<.3?(n++,1-v):v)}}
+ cams.forEach((c,i)=>{c.seen=0;drawCam(i,'idle')});hud2();msg('Tap up to 5 cameras to compare Alice’s bit with Bob’s, then decide.');learn('Teaching analogy: a spy’s peek leaves mistakes. The real BB84 is more complex than this game.')}
+function tap2(i){if(done2||taps<=0||cams[i].seen)return;taps--;cams[i].seen=1;focus=i;const bad=A[i]!=B[i];drawCam(i,bad?'bad':'ok');snd(1200,.06);
+ if(bad){seen++;alertV=1;flash('bad');snd(300,.5,'square',.06,200);msg('🚨 INTRUDER! Alice sent '+A[i]+' but Bob got '+B[i]+'.');learn('Measuring a qubit disturbs it, so a snooper leaves errors behind.')}else msg('Clear: both bits are '+A[i]+'.');hud2()}
+function decide(saySpy){if(done2||paused)return;done2=true;const ok=saySpy==spyOn;cams.forEach((c,i)=>drawCam(i,A[i]!=B[i]?'bad':'ok'));
+ streak=ok?streak+1:0;hud2();flash(ok?'ok':'bad');if(ok)snd(1000,.25,'sine',.1,1500);else snd(150,.4,'sawtooth',.1,60);
+ msg((ok?'✅ Correct! ':'❌ Wrong. ')+(spyOn?'A spy WAS listening (red = errors).':'No spy: every bit matched.'));
+ learn(spyOn?'Spying means measuring, and measuring disturbs qubits.':'No spy means no errors. More taps give more certainty.');
+ if(streak>=3){if(r1done){pend=setTimeout(winGame,1400)}else end('ROOM 2 CLEARED','Clear Room 1 too to complete the mission.','OK',()=>{});return}
+ pend=setTimeout(()=>{if(room==2)new2()},2800)}
+/* flow */
+function end(h,t,b,fn){$('eh').textContent=h;$('et').textContent=t;$('eb').textContent=b;$('eb').onclick=()=>{$('end').classList.add('hide');fn()};$('end').classList.remove('hide')}
+function setCam(){const p=C.aspect<1;if(room==1){C.position.set(0,3.6,p?21:16);C.lookAt(0,1.8,-8)}else{C.position.set(0,2.8,p?12:3);C.lookAt(0,2.8,-8)}}
+function setRoom(n){room=n;g1.visible=n==1;g2.visible=n==2;$('b1').classList.toggle('on',n==1);$('b2').classList.toggle('on',n==2);
+ $('rn').textContent=n==1?'Room 1 · Door Dash · Key Exchange':'Room 2 · Hide and Seek Cam · Catch the Spy';
+ $('obj').textContent=n==1?'Objective: collect 6 secret bits':'Objective: spot the spy, 3 correct calls in a row';
+ ['k','a1'].forEach(i=>$(i).classList.toggle('hide',n!=1));['s2','a2'].forEach(i=>$(i).classList.toggle('hide',n!=2));
+ if(n==1&&ph!='run'&&ph!='esc'&&ph!='crash'&&!key.length)reset1();if(n==2&&!A.length)new2();setCam()}
+function restartRoom(){$('end').classList.add('hide');if(room==1)reset1();else{streak=0;new2()}}
+function restartGame(){r1done=false;key=[];streak=0;A=[];$('b2').disabled=true;$('b2').textContent='🔒 R2';reset1();setRoom(1)}
+$('b1').onclick=()=>setRoom(1);$('b2').onclick=()=>setRoom(2);$('go').onclick=start1;$('spy').onclick=()=>decide(true);$('safe').onclick=()=>decide(false);$('rs').onclick=restartRoom;
+$('snd').onclick=()=>{muted=!muted;$('snd').textContent=muted?'🔇':'🔊';if(amb)amb.gain.value=muted?0:.025};
+$('pz').onclick=()=>{paused=!paused;$('pz').textContent=paused?'▶':'⏸';if(paused)msg('Paused.')};
+const RC=new THREE.Raycaster(),P=new THREE.Vector2();
+cv.addEventListener('pointerdown',e=>{if(paused||!started)return;const r=cv.getBoundingClientRect();P.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);RC.setFromCamera(P,C);
+ const h=RC.intersectObjects(room==1?doorMeshes:screens,false);if(!h.length)return;const u=h[0].object.userData;if(room==1)pickDoor(u.lane);else tap2(u.i)});
+function rs(){R.setSize(innerWidth,innerHeight);C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();setCam()}addEventListener('resize',rs);rs();
+/* update */
+function update(dt){
+ dust.rotation.y+=dt*.02;
+ if(room==1){ring.rotation.z+=dt;strips.forEach(s=>{if(ph=='run'||ph=='esc')s.position.z+=dt*9;if(s.position.z>14)s.position.z-=30});
+  for(const k in doors){const d=doors[k];d.panel.position.y=cl(d.panel.position.y,d.open?5.2:1.6,Math.min(1,dt*5))}
+  if(ph=='run'){const e=T-t0,p=Math.min(e/DUR,1),k=Math.min(1,dt*5);run.position.z=cl(12,-7.2,p);run.position.x=cl(run.position.x,tx,k);run.position.y=cl(run.position.y,ty*p,k);
+   run.userData.legs.forEach((l,i)=>l.rotation.x=Math.sin(T*14+i*Math.PI)*.8);run.position.y+=Math.abs(Math.sin(T*14))*.05;
+   const st=Math.floor(T*7);if(st!=lastStep){lastStep=st;snd(90,.05,'triangle',.05)}$('tm').textContent='⏱ '+Math.max(0,DUR-e).toFixed(1)+'s';if(p>=1){$('tm').textContent='';resolve()}}
+  else if(ph=='esc'){run.position.z-=dt*8;run.position.x=cl(run.position.x,doors[real].x,.2);if(run.position.z<-13.5)after1()}
+  else if(ph=='crash'){const k=Math.min(1,dt*6);run.rotation.x=cl(run.rotation.x,-1.5,k);run.position.y=cl(run.position.y,-.2,k);if(T-ct>1.4)after1()}}
+ else{ahol.rotation.z+=dt*2;ahol.rotation.y+=dt;ahol.material.opacity=.2+alertV*.8;alarm.intensity=alertV*2.5;alertV=Math.max(0,alertV-dt*.7);
+  dots.forEach((d,i)=>{d.position.x+=dt*3;if(d.position.x>5.2)d.position.x=-5;d.position.y=.5+Math.sin(T*5+i)*.1});
+  cams.forEach((c,i)=>{const s=focus==i?1.5:1;c.g.scale.setScalar(cl(c.g.scale.x,s,Math.min(1,dt*8)));c.g.position.z=cl(c.g.position.z,c.base.z+(focus==i?.9:0),Math.min(1,dt*8))});
+  sm.opacity=cl(sm.opacity,(spyOn&&(seen>0||done2))?.85:0,Math.min(1,dt*3))}
+ for(let i=bursts.length-1;i>=0;i--){const b=bursts[i];b.t+=dt;const a=b.pts.geometry.attributes.position;b.vel.forEach((v,j)=>{a.setXYZ(j,a.getX(j)+v.x*dt,a.getY(j)+v.y*dt,a.getZ(j)+v.z*dt);v.y-=dt*6});a.needsUpdate=true;b.pts.material.opacity=Math.max(0,1-b.t);if(b.t>1){S.remove(b.pts);b.pts.geometry.dispose();b.pts.material.dispose();bursts.splice(i,1)}}}
+let last=performance.now();(function loop(now){requestAnimationFrame(loop);const dt=Math.min((now-last)/1000,.05);last=now;if(started&&!paused){T+=dt;update(dt)}R.render(S,C)})(last);
+
+/* briefing, help, finale */
+let briefHelp=false,prevPaused=false;
+function openBrief(h){briefHelp=h;if(h){prevPaused=paused;paused=true}$('bgo').textContent=h?'RESUME MISSION':'ENTER THE MISSION';$('brief').classList.remove('hide');$('brief').scrollTop=0;newEx1();newEx2()}
+function closeBrief(){$('brief').classList.add('hide');if(briefHelp){paused=prevPaused}else started=true}
+$('bgo').onclick=closeBrief;$('hp').onclick=()=>{if($('win').classList.contains('hide'))openBrief(true)};
+document.querySelectorAll('.lm').forEach(b=>b.onclick=()=>{const m=$(b.dataset.t);m.classList.toggle('hide');b.textContent=m.classList.contains('hide')?'Learn more ▾':'Show less ▴'});
+let e1;function newEx1(){e1=Math.random()<.5?'u':'l';['u','l'].forEach(k=>{const b=$('x1'+k);b.className='';b.disabled=false});$('x1r').textContent='Which door is the real exit?'}
+['u','l'].forEach(k=>$('x1'+k).onclick=()=>{const ok=k==e1;$('x1'+k).className=ok?'ok':'no';$('x1'+e1).className='ok';['u','l'].forEach(j=>$('x1'+j).disabled=true);$('x1r').textContent=ok?'✅ Right door! The bit joins the key.':'❌ Wrong door. The message scrambles and the bit is discarded.';snd(ok?880:150,.2,ok?'sine':'sawtooth',.08)});
+$('x1n').onclick=newEx1;
+let e2;function newEx2(){const sp=Math.random()<.5,bad=sp?[0,1,2,3,4,5].sort(()=>Math.random()-.5).slice(0,2):[];e2={sp,bad,seen:0,hit:0,a:[0,1,2,3,4,5].map(()=>Math.random()<.5?1:0)};
+ $('x2g').innerHTML=e2.a.map((_,i)=>'<button data-i="'+i+'">📹 '+(i+1)+'</button>').join('');$('x2r').textContent='Tap a camera to compare Alice and Bob.';
+ $('x2g').querySelectorAll('button').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,x=e2.bad.includes(i),a=e2.a[i];if(b.dataset.d)return;b.dataset.d=1;e2.seen++;if(x)e2.hit++;b.className=x?'no':'ok';b.textContent='A'+a+' B'+(x?1-a:a);snd(x?300:1100,.1,x?'square':'sine',.06);
+  $('x2r').textContent=e2.hit?'🚨 Mismatch! A spy may be listening.':e2.seen>=3?'✅ All matching so far: the line looks clear.':'Matching so far… keep checking.'})}
+$('x2n').onclick=newEx2;
+/* finale */
+const cf=$('cf'),cx=cf.getContext('2d'),mob=Math.min(innerWidth,innerHeight)<700,CL=['#00C896','#65FBD2','#168AAD','#C7D1D9','#F3FAFC','#ffd43b','#ff6fb1','#ff9a3c'];
+let parts=[],cfOn=false,cfL=0,vT=0,fT=0,rT=0;
+function cfSize(){const d=Math.min(devicePixelRatio||1,1.5);cf.width=innerWidth*d;cf.height=innerHeight*d;cx.setTransform(d,0,0,d,0,0)}
+const rnd=(a,b)=>a+Math.random()*(b-a),pick_=a=>a[Math.floor(Math.random()*a.length)];
+function conf(x,y,vx,vy){if(parts.length>(mob?260:420))return;parts.push({k:0,x,y,vx,vy,w:rnd(6,11),h:rnd(4,8),r:rnd(0,6),vr:rnd(-9,9),c:pick_(CL),t:0,m:rnd(3.5,6)})}
+function popper(side){const n=mob?24:40,H=innerHeight;for(let i=0;i<n;i++){const a=(side<0?-.8:-Math.PI+.8)+rnd(-.45,.45),v=rnd(.55,1.05)*Math.max(600,H*1.25);conf(side<0?8:innerWidth-8,H-8,Math.cos(a)*v,Math.sin(a)*v)}}
+function firework(){const x=rnd(.15,.85)*innerWidth,y=rnd(.12,.5)*innerHeight,c=pick_(CL),n=mob?22:34;for(let i=0;i<n;i++){const a=i/n*6.283,v=rnd(110,230);parts.push({k:1,x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,c:i%3?c:'#F3FAFC',t:0,m:rnd(.9,1.4)})}snd(rnd(300,500),.18,'triangle',.05,90)}
+function cfLoop(now){if(!cfOn)return;requestAnimationFrame(cfLoop);const dt=Math.min((now-cfL)/1000,.05);cfL=now;
+ vT-=dt;fT-=dt;rT-=dt;if(vT<=0){vT=1.7;popper(-1);popper(1);snd(160,.1,'square',.09,40)}if(fT<=0){fT=rnd(.6,1.1);firework()}
+ if(rT<=0){rT=mob?.06:.035;conf(rnd(0,innerWidth),-12,rnd(-40,40),rnd(40,120))}
+ cx.clearRect(0,0,innerWidth,innerHeight);
+ for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.t+=dt;
+  if(p.k){p.vx*=.97;p.vy=p.vy*.97+120*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;const a=Math.max(0,1-p.t/p.m);cx.globalAlpha=a;cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,2.6,0,6.283);cx.fill();if(a<=0)parts.splice(i,1);continue}
+  p.vy+=900*dt;p.vx*=.992;if(p.vy>260&&p.t>.4)p.vy=Math.max(260,p.vy-1400*dt);p.x+=p.vx*dt;p.y+=p.vy*dt;p.r+=p.vr*dt;
+  if(p.y>innerHeight+20||p.t>p.m+3){parts.splice(i,1);continue}
+  cx.globalAlpha=1;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.scale(1,Math.cos(p.r*1.7));cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore()}
+ cx.globalAlpha=1}
+function fanfare(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>snd(f,.4,'triangle',.1),i*140));setTimeout(()=>[523,659,784,1047].forEach(f=>snd(f,1.1,'sine',.05)),650);setTimeout(()=>snd(1568,.5,'sine',.07,2093),800)}
+function winGame(){if(!r1done||streak<3||!$('win').classList.contains('hide'))return;paused=true;$('end').classList.add('hide');$('win').classList.remove('hide');$('win').scrollTop=0;cfSize();parts=[];cfOn=true;cfL=performance.now();vT=0;fT=.3;rT=0;fanfare();requestAnimationFrame(cfLoop)}
+function hideWin(){cfOn=false;parts=[];$('win').classList.add('hide');paused=false;$('pz').textContent='⏸'}
+$('pa').onclick=()=>{hideWin();restartGame()};
+$('mm').onclick=()=>{hideWin();restartGame();started=false;$('load').classList.remove('hide')};
+addEventListener('resize',()=>{if(cfOn)cfSize()});
+g2.visible=false;hudKey();reset1();setRoom(1);
+$('lt').textContent='Facility ready.';$('enter').classList.remove('hide');
+$('enter').onclick=()=>{try{if(AC){AC.resume();throw 0}AC=new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator();amb=AC.createGain();amb.gain.value=.025;o.type='sine';o.frequency.value=55;o.connect(amb);amb.connect(AC.destination);o.start()}catch(e){}$('load').classList.add('hide');openBrief(false)};
+}
+</script></body></html>
